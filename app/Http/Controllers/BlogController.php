@@ -4,20 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Blog;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class BlogController extends Controller
 {
 
-    public function index(Request $request)
+    public function index()
     {
-        $blogs = Blog::with('user')->latest()->paginate(10);
-        return inertia('Home', ['blogs' => $blogs]);
-    }
-
-    public function apiIndex(Request $request)
-    {
-        $blogs = Blog::with('user')->latest()->paginate(10);
-        return response()->json($blogs);
+        $blogs = Blog::with('user')->paginate(10); // Eager loading the user who created the blog
+        return Inertia::render('Blog/Index', [
+            'blogs' => $blogs,
+        ]);
     }
     public function store(Request $request)
     {
