@@ -22,11 +22,10 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
 
 // Public routes
 Route::get('/', [BlogController::class, 'index'])->name('home');
-Route::get('/api/blogs', [BlogController::class, 'apiIndex'])->name('api.blogs.index');
 
 // Authenticated routes
 Route::middleware('auth')->group(function () {
-    Route::post('/blogs/store', [BlogController::class, 'store'])->name('blogs.store');
+    Route::post('/blogs/store', [BlogController::class, 'store'])->name('blogs.store')->name('blogs.store');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
