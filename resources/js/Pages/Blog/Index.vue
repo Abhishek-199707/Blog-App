@@ -186,6 +186,13 @@ h1 {
     display: inline-block;
     margin-top: 1rem;
 }
+    .login-link{
+    color: #007BFF;
+}
+
+.login-link:hover{
+    color: black;
+}
 
 .view-button:hover {
     background-color: #007BFF;
