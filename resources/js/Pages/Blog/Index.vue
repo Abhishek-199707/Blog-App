@@ -1,9 +1,37 @@
 <template>
     <div class="container mx-auto py-12 relative">
-        <!-- Top Right Buttons (Logout and Write) -->
-        <div v-if="auth.user" class="top-right-buttons">
-            <Link :href="route('logout')" method="post" as="button" class="logout-button">Logout</Link>
-            <Link :href="route('dashboard')" as="button" class="write-button">Write</Link>
+        <!-- Success Message -->
+        <div v-if="successMessage" class="success-message">
+            {{ successMessage }}
+        </div>
+
+        <!-- Top Right Buttons (Logout, Write, and Register) -->
+        <div class="top-right-buttons">
+            <Link
+                v-if="auth.user"
+                :href="route('logout')"
+                method="post"
+                as="button"
+                class="logout-button"
+            >
+                Logout
+            </Link>
+            <Link
+                v-if="auth.user"
+                :href="route('dashboard')"
+                as="button"
+                class="write-button"
+            >
+                Write
+            </Link>
+            <Link
+                v-else
+                :href="route('register')"
+                as="button"
+                class="register-button"
+            >
+                Register
+            </Link>
         </div>
 
         <h1 class="text-3xl font-bold mb-6">Blog Posts</h1>
@@ -13,7 +41,11 @@
             <p>Welcome, {{ auth.user.name }}!</p>
         </div>
         <div v-else class="mb-6">
-            <p class="text-xl">Please <Link :href="route('login')" class="login-link">login</Link> to post your blog.</p>
+            <p class="text-xl">
+                Please
+                <Link :href="route('login')" class="login-link">login</Link>
+                to post your blog.
+            </p>
         </div>
 
         <!-- Blog Posts Listing -->
@@ -55,6 +87,7 @@ const blogs = ref(props.blogs.data);
 const auth = ref(props.auth);
 const currentPage = ref(props.blogs.current_page);
 const totalPages = ref(props.blogs.last_page);
+const successMessage = ref(props.success || null);
 
 const fetchBlogs = async (page = 1) => {
     await Inertia.get(route('home', { page }), {}, {
@@ -69,8 +102,12 @@ const fetchBlogs = async (page = 1) => {
 
 onMounted(async () => {
     await nextTick();
+    if (successMessage.value) {
+        console.log('Success:', successMessage.value);
+    }
 });
 </script>
+
 
 <style scoped>
 .container {
@@ -81,6 +118,17 @@ onMounted(async () => {
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     position: relative;
+}
+
+/* Success Message Styling */
+.success-message {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    border-radius: 4px;
+    font-family: 'Roboto', sans-serif;
 }
 
 h1 {
@@ -144,7 +192,7 @@ h1 {
     color: white;
 }
 
-/* Top Right Buttons (Logout and Write) */
+/* Top Right Buttons (Logout, Write, and Register) */
 .top-right-buttons {
     position: absolute;
     top: 1rem;
@@ -153,7 +201,7 @@ h1 {
     gap: 1rem;
 }
 
-.logout-button, .write-button {
+.logout-button, .write-button, .register-button {
     color: white;
     background-color: #007BFF;
     padding: 0.5rem 1rem;
@@ -162,21 +210,24 @@ h1 {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.logout-button:hover, .write-button:hover {
+.logout-button:hover, .write-button:hover, .register-button:hover {
     background-color: #0056b3;
 }
 
 /* Edit Button */
 .edit-button {
-    color: white;
-    background-color: #28a745;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
+    color: #007BFF;
     text-decoration: none;
+    padding: 0.5rem 1rem;
+    border: 1px solid #007BFF;
+    border-radius: 4px;
     transition: background-color 0.3s ease, color 0.3s ease;
+    display: inline-block;
+    margin-top: 1rem;
 }
 
 .edit-button:hover {
-    background-color: #218838;
+    background-color: #007BFF;
+    color: white;
 }
 </style>

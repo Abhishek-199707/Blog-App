@@ -28,7 +28,7 @@ class BlogController extends Controller
             'user_id' => auth()->id(),
         ]);
 
-        return redirect()->back()->with('success', 'Blog post created successfully!');
+        return redirect()->route('home')->with('success', 'Blog post created successfully!');
     }
 
     public function edit($id)
