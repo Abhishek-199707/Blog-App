@@ -5,7 +5,7 @@
             <p>Welcome, {{ auth.user.name }}!</p>
         </div>
         <div v-else class="mb-6">
-            <p>Please <Link :href="route('login')">login</Link> to post your blog.</p>
+            <p>Please <Link :href="route('login')" class="login-link">login</Link> to post your blog.</p>
         </div>
         <div v-for="blog in blogs" :key="blog.id" class="blog-post mb-4">
             <h2 class="text-xl font-bold">{{ blog.title }}</h2>
@@ -51,19 +51,78 @@ onMounted(async () => {
 .container {
     max-width: 800px;
     margin: 0 auto;
-    padding: 1rem;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+    letter-spacing: 1px;
 }
 
 .blog-post {
-    padding: 1rem;
-    border-bottom: 1px solid #ddd;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.blog-post:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .blog-post h2 {
     margin-top: 0;
+    font-size: 1.75rem;
+    color: #007BFF;
+    font-family: 'Roboto', sans-serif;
+    transition: color 0.3s ease;
+}
+
+.blog-post h2:hover {
+    color: #0056b3;
 }
 
 .blog-post p {
-    margin: 0.5rem 0;
+    margin: 0.75rem 0;
+    font-family: 'Open Sans', sans-serif;
+    line-height: 1.6;
+    color: #555;
+}
+
+.blog-post p.text-sm {
+    margin-top: 1rem;
+    color: #999;
+}
+
+.blog-post p.text-sm a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+.blog-post p.text-sm a:hover {
+    text-decoration: underline;
+}
+
+.login-link {
+    color: blue;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    background-color: #ffe3e3;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.login-link:hover {
+    background-color: #0c0405;
+    color: white;
 }
 </style>
