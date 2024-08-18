@@ -18,14 +18,17 @@ Route::get('/login', [AuthenticatedSessionController::class, 'create'])
     ->middleware('guest')
     ->name('login');
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
-Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
 // Public routes
 Route::get('/', [BlogController::class, 'index'])->name('home');
 
 // Authenticated routes
 Route::middleware('auth')->group(function () {
-    Route::post('/blogs/store', [BlogController::class, 'store'])->name('blogs.store')->name('blogs.store');
+    Route::post('/blogs', [BlogController::class, 'store'])->name('blogs.store');
+    Route::get('/blogs/{id}/edit', [BlogController::class, 'edit'])->name('blogs.edit');
+    Route::put('/blogs/{id}', [BlogController::class, 'update'])->name('blogs.update');
+    Route::get('/blogs/{id}', [BlogController::class, 'show'])->name('blogs.show'); // Add the show route here
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

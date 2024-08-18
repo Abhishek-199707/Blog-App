@@ -33,6 +33,11 @@ const submit = () => {
     <GuestLayout>
         <Head title="Log in" />
 
+        <!-- Home Button -->
+        <div class="top-right-buttons">
+            <Link :href="route('home')" class="home-button">Home</Link>
+        </div>
+
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
             {{ status }}
         </div>
@@ -92,3 +97,24 @@ const submit = () => {
         </form>
     </GuestLayout>
 </template>
+
+<style scoped>
+.top-right-buttons {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+.home-button {
+    color: white;
+    background-color: #007BFF;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.home-button:hover {
+    background-color: #0056b3;
+}
+</style>

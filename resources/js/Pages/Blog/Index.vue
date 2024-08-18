@@ -1,17 +1,41 @@
 <template>
-    <div class="container mx-auto py-12">
+    <div class="container mx-auto py-12 relative">
+        <!-- Top Right Buttons (Logout and Write) -->
+        <div v-if="auth.user" class="top-right-buttons">
+            <Link :href="route('logout')" method="post" as="button" class="logout-button">Logout</Link>
+            <Link :href="route('dashboard')" as="button" class="write-button">Write</Link>
+        </div>
+
         <h1 class="text-3xl font-bold mb-6">Blog Posts</h1>
+
+        <!-- User Authentication Section -->
         <div v-if="auth.user" class="mb-6">
             <p>Welcome, {{ auth.user.name }}!</p>
         </div>
         <div v-else class="mb-6">
-            <p>Please <Link :href="route('login')" class="login-link">login</Link> to post your blog.</p>
+            <p class="text-xl">Please <Link :href="route('login')" class="login-link">login</Link> to post your blog.</p>
         </div>
+
+        <!-- Blog Posts Listing -->
         <div v-for="blog in blogs" :key="blog.id" class="blog-post mb-4">
             <h2 class="text-xl font-bold">{{ blog.title }}</h2>
-            <p>{{ blog.content }}</p>
-            <p class="text-sm text-gray-500">By {{ blog.user.name }} on {{ new Date(blog.created_at).toLocaleDateString() }}</p>
+            <p>
+                {{ blog.content.length > 300 ? blog.content.substring(0, 300) + '...' : blog.content }}
+            </p>
+            <p class="text-sm text-gray-500">
+                By {{ blog.user.name }} on {{ new Date(blog.created_at).toLocaleDateString() }}
+            </p>
+
+            <!-- View Button -->
+            <Link :href="route('blogs.show', blog.id)" class="view-button">View</Link>
+
+            <!-- Edit Button (Visible only to the author) -->
+            <div v-if="auth.user && auth.user.id === blog.user.id" class="mt-2">
+                <Link :href="route('blogs.edit', blog.id)" class="edit-button">Edit</Link>
+            </div>
         </div>
+
+        <!-- Pagination -->
         <Pagination
             :currentPage="currentPage"
             :totalPages="totalPages"
@@ -22,8 +46,9 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from 'vue';
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import Pagination from '@/Components/Pagination.vue';
+import { Inertia } from '@inertiajs/inertia';
 
 const { props } = usePage();
 const blogs = ref(props.blogs.data);
@@ -55,6 +80,7 @@ onMounted(async () => {
     background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
 }
 
 h1 {
@@ -102,27 +128,55 @@ h1 {
     color: #999;
 }
 
-.blog-post p.text-sm a {
+.view-button {
     color: #007BFF;
     text-decoration: none;
-}
-
-.blog-post p.text-sm a:hover {
-    text-decoration: underline;
-}
-
-.login-link {
-    color: blue;
-    font-weight: bold;
-    text-decoration: none;
-    padding: 0.25rem 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid #007BFF;
     border-radius: 4px;
-    background-color: #ffe3e3;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: inline-block;
+    margin-top: 1rem;
+}
+
+.view-button:hover {
+    background-color: #007BFF;
+    color: white;
+}
+
+/* Top Right Buttons (Logout and Write) */
+.top-right-buttons {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.logout-button, .write-button {
+    color: white;
+    background-color: #007BFF;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.login-link:hover {
-    background-color: #0c0405;
+.logout-button:hover, .write-button:hover {
+    background-color: #0056b3;
+}
+
+/* Edit Button */
+.edit-button {
     color: white;
+    background-color: #28a745;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.edit-button:hover {
+    background-color: #218838;
 }
 </style>
