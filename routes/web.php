@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\CommentController;
 
 // Authentication routes
 Route::get('/register', [RegisteredUserController::class, 'create'])
@@ -20,8 +21,17 @@ Route::get('/login', [AuthenticatedSessionController::class, 'create'])
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
+Route::post('/blogs/{blog}/comments', [CommentController::class, 'store'])->name('comments.store');
+Route::post('/blogs/{id}/repost', [BlogController::class, 'repost'])->name('blogs.repost');
+
+
 // Public routes
 Route::get('/', [BlogController::class, 'index'])->name('home');
+
+// web.php
+Route::delete('/blogs/{id}/delete-repost', [BlogController::class, 'deleteRepost'])
+    ->name('blogs.delete-repost')
+    ->middleware('auth');
 
 // Authenticated routes
 Route::middleware('auth')->group(function () {
@@ -35,6 +45,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->middleware('verified')->name('dashboard');
+
+Route::delete('/blogs/{blog}', [BlogController::class, 'destroy'])->name('blogs.destroy');
+
 });
 
 require __DIR__.'/auth.php';

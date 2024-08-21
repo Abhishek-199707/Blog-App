@@ -38,7 +38,7 @@
 
         <!-- User Authentication Section -->
         <div v-if="auth.user" class="mb-6">
-            <p>Welcome, {{ auth.user.name }}!</p>
+            <p>Welcome, {{ auth.user?.name }}!</p>
         </div>
         <div v-else class="mb-6">
             <p class="text-xl">
@@ -52,18 +52,49 @@
         <div v-for="blog in blogs" :key="blog.id" class="blog-post mb-4">
             <h2 class="text-xl font-bold">{{ blog.title }}</h2>
             <p>
-                {{ blog.content.length > 300 ? blog.content.substring(0, 300) + '...' : blog.content }}
+                {{ (blog.content?.length > 300 ? blog.content.substring(0, 300) + '...' : blog.content) || 'No content available' }}
             </p>
             <p class="text-sm text-gray-500">
-                By {{ blog.user.name }} on {{ new Date(blog.created_at).toLocaleDateString() }}
+                By {{ blog.user?.name || 'Unknown author' }} on {{ new Date(blog.created_at).toLocaleDateString() }}
             </p>
+
+            <!-- Repost Information -->
+            <div v-if="blog.reposts.length > 0" class="repost-info mt-4">
+                <h3 class="text-lg font-semibold">Reposted By:</h3>
+                <ul>
+                    <li v-for="repost in blog.reposts" :key="repost.id">
+                        <p><strong>{{ repost.user?.name }}:</strong> Originally posted by {{ blog.originalAuthor?.name || 'Unknown author' }}</p>
+                    </li>
+                </ul>
+            </div>
 
             <!-- View Button -->
             <Link :href="route('blogs.show', blog.id)" class="view-button">View</Link>
 
-            <!-- Edit Button (Visible only to the author) -->
-            <div v-if="auth.user && auth.user.id === blog.user.id" class="mt-2">
-                <Link :href="route('blogs.edit', blog.id)" class="edit-button">Edit</Link>
+            <!-- Repost Button -->
+            <button
+                v-if="auth.user"
+                @click="repost(blog.id)"
+                class="repost-button"
+            >
+                Repost
+            </button>
+
+            <!-- Delete Repost Button -->
+            <button
+                v-if="auth.user && hasReposted(blog.id)"
+                @click="deleteRepost(blog.id)"
+                class="delete-repost-button"
+            >
+                Delete Repost
+            </button>
+
+            <!-- Comments Section -->
+            <div v-if="blog.comments?.length" class="comments-section mt-4">
+                <h3 class="text-lg font-semibold">Comments</h3>
+                <div v-for="comment in blog.comments" :key="comment.id" class="comment mt-2">
+                    <p><strong>{{ comment.user?.name || 'Anonymous' }}:</strong> {{ comment.content || 'No content' }}</p>
+                </div>
             </div>
         </div>
 
@@ -79,15 +110,44 @@
 <script setup>
 import { ref, onMounted, nextTick } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
-import Pagination from '@/Components/Pagination.vue';
 import { Inertia } from '@inertiajs/inertia';
+import Pagination from '@/Components/Pagination.vue';
 
 const { props } = usePage();
-const blogs = ref(props.blogs.data);
-const auth = ref(props.auth);
-const currentPage = ref(props.blogs.current_page);
-const totalPages = ref(props.blogs.last_page);
+const blogs = ref(props.blogs?.data || []);
+const auth = ref(props.auth || {});
+const currentPage = ref(props.blogs?.current_page || 1);
+const totalPages = ref(props.blogs?.last_page || 1);
 const successMessage = ref(props.success || null);
+
+const repost = async (blogId) => {
+    await Inertia.post(route('blogs.repost', blogId), {}, {
+        onSuccess: () => {
+            successMessage.value = 'Blog reposted successfully!';
+            fetchBlogs(currentPage.value);
+        },
+        onError: (errors) => {
+            console.error(errors);
+        }
+    });
+};
+
+const deleteRepost = async (blogId) => {
+    await Inertia.delete(route('blogs.delete-repost', blogId), {}, {
+        onSuccess: () => {
+            successMessage.value = 'Repost deleted successfully!';
+            fetchBlogs(currentPage.value);
+        },
+        onError: (errors) => {
+            console.error(errors);
+        }
+    });
+};
+
+const hasReposted = (blogId) => {
+    // Check if the current user has reposted this blog
+    return blogs.value.some(blog => blog.id === blogId && blog.reposts.some(repost => repost.user.id === auth.value.user.id));
+};
 
 const fetchBlogs = async (page = 1) => {
     await Inertia.get(route('home', { page }), {}, {
@@ -108,8 +168,48 @@ onMounted(async () => {
 });
 </script>
 
-
 <style scoped>
+.repost-info {
+    padding: 1rem;
+    border-top: 1px solid #ddd;
+    margin-top: 1rem;
+}
+.repost-info h3 {
+    margin-bottom: 0.5rem;
+}
+.repost-info ul {
+    list-style: none;
+    padding: 0;
+}
+.repost-info li {
+    margin-bottom: 0.5rem;
+}
+.delete-repost-button {
+    color: #FF0000;
+    background-color: #fff;
+    border: 1px solid #FF0000;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: inline-block;
+    margin-top: 1rem;
+}
+
+.delete-repost-button:hover {
+    background-color: #FF0000;
+    color: white;
+}
+.reposts-section {
+    padding: 1rem;
+    border-top: 1px solid #ddd;
+    margin-top: 1rem;
+}
+
+.repost {
+    padding: 0.5rem;
+    border-bottom: 1px solid #ddd;
+}
 .container {
     max-width: 800px;
     margin: 0 auto;
@@ -118,6 +218,14 @@ onMounted(async () => {
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     position: relative;
+}
+
+.login-link {
+    color: blue;
+}
+
+.login-link:hover {
+    color: rgb(3, 146, 79);
 }
 
 /* Success Message Styling */
@@ -186,15 +294,68 @@ h1 {
     display: inline-block;
     margin-top: 1rem;
 }
-    .login-link{
-    color: #007BFF;
-}
-
-.login-link:hover{
-    color: black;
-}
 
 .view-button:hover {
+    background-color: #007BFF;
+    color: white;
+}
+
+.repost-button {
+    color: #007BFF;
+    background-color: #fff;
+    border: 1px solid #007BFF;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: inline-block;
+    margin-top: 1rem;
+}
+
+.repost-button:hover {
+    background-color: #007BFF;
+    color: white;
+}
+
+.comments-section {
+    padding: 1rem;
+    border-top: 1px solid #ddd;
+    margin-top: 1rem;
+}
+
+.comment {
+    padding: 0.5rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.delete-button {
+    color: #FF0000;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border: 1px solid #FF0000;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: inline-block;
+    margin-top: 1rem;
+}
+
+.delete-button:hover {
+    background-color: #FF0000;
+    color: white;
+}
+
+.edit-button {
+    color: #007BFF;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border: 1px solid #007BFF;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: inline-block;
+    margin-top: 1rem;
+}
+
+.edit-button:hover {
     background-color: #007BFF;
     color: white;
 }
@@ -221,20 +382,15 @@ h1 {
     background-color: #0056b3;
 }
 
-/* Edit Button */
-.edit-button {
-    color: #007BFF;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-    border: 1px solid #007BFF;
-    border-radius: 4px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    display: inline-block;
-    margin-top: 1rem;
+.reposted-blogs {
+    padding: 1rem;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
-.edit-button:hover {
-    background-color: #007BFF;
-    color: white;
+.reposted-blogs h2 {
+    color: #333;
+    font-family: 'Roboto', sans-serif;
 }
 </style>
