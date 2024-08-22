@@ -51,39 +51,73 @@ const submit = () => {
 </template>
 
 <style scoped>
+/* Container for the blog form */
 .blog-form-container {
-    background-color: #f9f9f9;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #f3f4f6, #ffffff);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
+.blog-form-container:hover {
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+}
+
+/* Input fields */
 .input-field,
 .textarea-field {
     width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
     font-size: 1rem;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+    margin-bottom: 1rem;
+    background-color: #f9fafb;
 }
 
+.input-field:focus,
+.textarea-field:focus {
+    border-color: #3b82f6;
+    background-color: #ffffff;
+    outline: none;
+}
+
+/* Textarea styling */
 .textarea-field {
-    height: 150px;
+    height: 200px;
     resize: vertical;
 }
 
+/* Submit button */
 .submit-button {
-    background-color: #007bff;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
     color: white;
     padding: 0.75rem 1.5rem;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     font-size: 1rem;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background 0.3s ease, transform 0.3s ease;
 }
 
 .submit-button:hover {
-    background-color: #0056b3;
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    transform: scale(1.05);
+}
+
+/* Header styling */
+h2 {
+    color: #1e40af;
+    font-family: 'Poppins', sans-serif;
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
 }
 </style>
+
+

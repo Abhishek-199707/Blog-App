@@ -28,7 +28,7 @@
         <div v-if="auth.user" class="mt-6">
             <form @submit.prevent="postComment">
                 <textarea v-model="commentContent" rows="3" class="w-full p-2 border rounded" placeholder="Add a comment..."></textarea>
-                <button type="submit" class="mt-2 bg-blue-500 text-white py-2 px-4 rounded">Post Comment</button>
+                <button type="submit" class="mt-2 submit-button">Post Comment</button>
             </form>
         </div>
 
@@ -70,9 +70,9 @@ const confirmDelete = () => {
     max-width: 800px;
     margin: 0 auto;
     padding: 2rem;
-    background-color: #f9f9f9;
+    background-color: white; /* Set background color to white */
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
@@ -88,31 +88,25 @@ h1 {
     overflow-wrap: break-word;
 }
 
-.edit-button {
-    color: #007BFF;
+.edit-button,
+.delete-button,
+.back-button {
+    color: #1a202c;
     text-decoration: none;
-    padding: 0.5rem 1rem;
-    border: 1px solid #007BFF;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #1a202c;
     border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: inline-block;
     margin-right: 1rem;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
 }
 
-.edit-button:hover {
-    background-color: #007BFF;
-    color: white;
-}
-
-.delete-button {
-    color: #007BFF;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-    border: 1px solid #007BFF;
-    border-radius: 4px;
-    margin-right: 1rem;
-}
-
-.delete-button:hover {
-    background-color: #007BFF;
+.edit-button:hover,
+.delete-button:hover,
+.back-button:hover {
+    background-color: #1a202c;
     color: white;
 }
 
@@ -120,19 +114,37 @@ h1 {
     margin-top: 2rem;
 }
 
-.back-button {
-    color: #007BFF;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-    border: 1px solid #007BFF;
+textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #1a202c;
     border-radius: 4px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    display: inline-block;
-    margin-top: 1rem;
+    font-size: 1rem;
+    color: #333;
 }
 
-.back-button:hover {
-    background-color: #007BFF;
+textarea:focus {
+    border-color: #4a5568;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(74, 85, 104, 0.5);
+}
+
+button[type="submit"] {
+    background-color: #1a202c;
     color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+}
+
+button[type="submit"]:hover {
+    background-color: #2d3748;
 }
 </style>
+
+

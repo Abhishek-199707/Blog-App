@@ -187,171 +187,136 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.delete-comment-button {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    color: red;
-    font-weight: bold;
-}
+/* General Button Styles */
 
-.repost-info {
-    padding: 1rem;
-    border-top: 1px solid #ddd;
-    margin-top: 1rem;
-}
-.repost-info h3 {
-    margin-bottom: 0.5rem;
-}
-.repost-info ul {
-    list-style: none;
-    padding: 0;
-}
-.repost-info li {
-    margin-bottom: 0.5rem;
-}
-.delete-repost-button {
-    color: #FF0000;
-    background-color: #fff;
-    border: 1px solid #FF0000;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    display: inline-block;
-    margin-top: 1rem;
-}
-
-.delete-repost-button:hover {
-    background-color: #FF0000;
-    color: white;
-}
-.reposts-section {
-    padding: 1rem;
-    border-top: 1px solid #ddd;
-    margin-top: 1rem;
-}
-
-.repost {
-    padding: 0.5rem;
-    border-bottom: 1px solid #ddd;
-}
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
-    background-color: #f9f9f9;
+button, .logout-button, .write-button, .register-button, .view-button, .delete-repost-button {
+    padding: 0.75rem 1.5rem;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    position: relative;
-}
-
-.login-link {
-    color: blue;
-}
-
-.login-link:hover {
-    color: rgb(3, 146, 79);
-}
-
-/* Success Message Styling */
-.success-message {
-    padding: 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    margin-right: 1rem;
     margin-bottom: 1rem;
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-    border-radius: 4px;
-    font-family: 'Roboto', sans-serif;
+    display: inline-block;
 }
 
-h1 {
-    color: #333;
-    text-align: center;
-    font-family: 'Roboto', sans-serif;
-    letter-spacing: 1px;
+/* Logout, Write, Register Buttons */
+.logout-button, .write-button, .register-button {
+    background: linear-gradient(90deg, #1e3a8a, #3b82f6);
+    color: #fff;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.blog-post {
+.logout-button:hover, .write-button:hover, .register-button:hover {
+    background: linear-gradient(90deg, #3b82f6, #1e3a8a);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* View Button */
+.view-button {
+    background: linear-gradient(90deg, #10b981, #34d399);
+    color: #fff;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.view-button:hover {
+    background: linear-gradient(90deg, #34d399, #10b981);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Repost Button */
+.repost-button {
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    color: #fff;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.repost-button:hover {
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Delete Comment Button */
+.delete-comment-button {
+    background: linear-gradient(90deg, #ef4444, #f87171);
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    margin-left: 1rem;
+}
+
+.delete-comment-button:hover {
+    background: linear-gradient(90deg, #f87171, #ef4444);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Repost Info */
+.repost-info {
     padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    background-color: #fff;
-    border: 1px solid #ddd;
+    border-top: 2px solid #ddd;
+    margin-top: 1.5rem;
+    background-color: #f9fafb;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
+.repost-info h3 {
+    margin-bottom: 0.75rem;
+}
+
+.repost-info ul {
+    list-style: none;
+    padding: 0;
+}
+
+.repost-info li {
+    margin-bottom: 0.75rem;
+    padding: 0.5rem;
+    border-bottom: 1px solid #ddd;
+}
+
+/* General Spacing */
+.container {
+    padding: 2rem 1.5rem;
+}
+
+.blog-post {
+    margin-bottom: 3rem;
+}
+
 .top-right-buttons {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
-    display: flex;
-    gap: 0.5rem;
+    top: 2rem;
+    right: 2rem;
 }
 
-.logout-button, .write-button, .register-button {
-    padding: 0.5rem 1rem;
-    color: white;
-    background-color: #333;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+h1, h2 {
+    margin-bottom: 1.5rem;
 }
 
-.logout-button:hover,
-.write-button:hover,
-.register-button:hover {
-    background-color: rgb(11, 61, 156);
-}
-
-.logout-button {
-    background-color: #ff0000;
-}
-
-.logout-button:hover {
-    background-color: #cc0000;
-}
-
-.view-button {
-    display: inline-block;
-    margin-top: 0.5rem;
-    padding: 0.5rem 1rem;
-    color: white;
-    background-color: #333;
-    border-radius: 4px;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    text-decoration: none;
-}
-
-.view-button:hover {
-    background-color: #666;
-}
-
-.repost-button {
-    display: inline-block;
-    margin-top: 0.5rem;
-    padding: 0.5rem 1rem;
-    color: #fff;
-    background-color: #0b3d9c;
-    border-radius: 4px;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.repost-button:hover {
-    background-color: #0b61d9;
+.comments-section {
+    margin-top: 2rem;
 }
 
 .comment {
-    background-color: #f4f4f4;
-    padding: 0.5rem;
-    border-radius: 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background-color: #f1f5f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 </style>
+
