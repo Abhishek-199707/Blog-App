@@ -22,6 +22,8 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
 Route::post('/blogs/{blog}/comments', [CommentController::class, 'store'])->name('comments.store');
+Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+
 Route::post('/blogs/{id}/repost', [BlogController::class, 'repost'])->name('blogs.repost');
 
 

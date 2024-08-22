@@ -63,7 +63,7 @@
                 <h3 class="text-lg font-semibold">Reposted By:</h3>
                 <ul>
                     <li v-for="repost in blog.reposts" :key="repost.id">
-                        <p><strong>{{ repost.user?.name }}:</strong> Originally posted by {{ blog.originalAuthor?.name || 'Unknown author' }}</p>
+                        <p><strong>{{ repost.user?.name }}</strong></p>
                     </li>
                 </ul>
             </div>
@@ -92,8 +92,15 @@
             <!-- Comments Section -->
             <div v-if="blog.comments?.length" class="comments-section mt-4">
                 <h3 class="text-lg font-semibold">Comments</h3>
-                <div v-for="comment in blog.comments" :key="comment.id" class="comment mt-2">
+                <div v-for="comment in blog.comments" :key="comment.id" class="comment mt-2 flex justify-between items-center">
                     <p><strong>{{ comment.user?.name || 'Anonymous' }}:</strong> {{ comment.content || 'No content' }}</p>
+                    <button
+                        v-if="auth.user && (comment.user_id === auth.user.id || blog.user_id === auth.user.id)"
+                        @click="deleteComment(comment.id)"
+                        class="delete-comment-button"
+                    >
+                        Delete
+                    </button>
                 </div>
             </div>
         </div>
@@ -144,8 +151,19 @@ const deleteRepost = async (blogId) => {
     });
 };
 
+const deleteComment = async (commentId) => {
+    await Inertia.delete(route('comments.destroy', commentId), {}, {
+        onSuccess: () => {
+            successMessage.value = 'Comment deleted successfully!';
+            fetchBlogs(currentPage.value);
+        },
+        onError: (errors) => {
+            console.error(errors);
+        }
+    });
+};
+
 const hasReposted = (blogId) => {
-    // Check if the current user has reposted this blog
     return blogs.value.some(blog => blog.id === blogId && blog.reposts.some(repost => repost.user.id === auth.value.user.id));
 };
 
@@ -169,6 +187,14 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.delete-comment-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: red;
+    font-weight: bold;
+}
+
 .repost-info {
     padding: 1rem;
     border-top: 1px solid #ddd;
@@ -250,147 +276,82 @@ h1 {
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     background-color: #fff;
+    border: 1px solid #ddd;
     border-radius: 8px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.blog-post:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.blog-post h2 {
-    margin-top: 0;
-    font-size: 1.75rem;
-    color: #007BFF;
-    font-family: 'Roboto', sans-serif;
-    transition: color 0.3s ease;
-}
-
-.blog-post h2:hover {
-    color: #0056b3;
-}
-
-.blog-post p {
-    margin: 0.75rem 0;
-    font-family: 'Open Sans', sans-serif;
-    line-height: 1.6;
-    color: #555;
-}
-
-.blog-post p.text-sm {
-    margin-top: 1rem;
-    color: #999;
-}
-
-.view-button {
-    color: #007BFF;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-    border: 1px solid #007BFF;
-    border-radius: 4px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    display: inline-block;
-    margin-top: 1rem;
-}
-
-.view-button:hover {
-    background-color: #007BFF;
-    color: white;
-}
-
-.repost-button {
-    color: #007BFF;
-    background-color: #fff;
-    border: 1px solid #007BFF;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    display: inline-block;
-    margin-top: 1rem;
-}
-
-.repost-button:hover {
-    background-color: #007BFF;
-    color: white;
-}
-
-.comments-section {
-    padding: 1rem;
-    border-top: 1px solid #ddd;
-    margin-top: 1rem;
-}
-
-.comment {
-    padding: 0.5rem;
-    border-bottom: 1px solid #ddd;
-}
-
-.delete-button {
-    color: #FF0000;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-    border: 1px solid #FF0000;
-    border-radius: 4px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    display: inline-block;
-    margin-top: 1rem;
-}
-
-.delete-button:hover {
-    background-color: #FF0000;
-    color: white;
-}
-
-.edit-button {
-    color: #007BFF;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-    border: 1px solid #007BFF;
-    border-radius: 4px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    display: inline-block;
-    margin-top: 1rem;
-}
-
-.edit-button:hover {
-    background-color: #007BFF;
-    color: white;
-}
-
-/* Top Right Buttons (Logout, Write, and Register) */
 .top-right-buttons {
     position: absolute;
     top: 1rem;
     right: 1rem;
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
 }
 
 .logout-button, .write-button, .register-button {
-    color: white;
-    background-color: #007BFF;
     padding: 0.5rem 1rem;
+    color: white;
+    background-color: #333;
+    border: none;
     border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.logout-button:hover,
+.write-button:hover,
+.register-button:hover {
+    background-color: rgb(11, 61, 156);
+}
+
+.logout-button {
+    background-color: #ff0000;
+}
+
+.logout-button:hover {
+    background-color: #cc0000;
+}
+
+.view-button {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    color: white;
+    background-color: #333;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
     text-decoration: none;
-    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.logout-button:hover, .write-button:hover, .register-button:hover {
-    background-color: #0056b3;
+.view-button:hover {
+    background-color: #666;
 }
 
-.reposted-blogs {
-    padding: 1rem;
-    background-color: #f0f0f0;
-    border-radius: 8px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+.repost-button {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    color: #fff;
+    background-color: #0b3d9c;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-.reposted-blogs h2 {
-    color: #333;
-    font-family: 'Roboto', sans-serif;
+.repost-button:hover {
+    background-color: #0b61d9;
+}
+
+.comment {
+    background-color: #f4f4f4;
+    padding: 0.5rem;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 </style>
