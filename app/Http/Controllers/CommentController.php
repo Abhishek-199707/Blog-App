@@ -23,15 +23,19 @@ class CommentController extends Controller
     }
 
     public function destroy(Comment $comment)
-{
-    // Check if the authenticated user is the owner of the comment
-    if ($comment->user_id !== auth()->id()) {
-        return redirect()->back()->with('error', 'You are not authorized to delete this comment.');
+    {
+        // Get the blog associated with the comment
+        $blog = $comment->blog;
+
+        // Check if the authenticated user is the owner of the blog or the owner of the comment
+        if ($blog->user_id !== auth()->id() && $comment->user_id !== auth()->id()) {
+            return redirect()->back()->with('error', 'You are not authorized to delete this comment.');
+        }
+
+        $comment->delete();
+
+        return redirect()->back()->with('success', 'Comment deleted successfully!');
     }
 
-    $comment->delete();
-
-    return redirect()->back()->with('success', 'Comment deleted successfully!');
-}
 
 }
