@@ -1,4 +1,5 @@
 <template>
+    <Layout>
     <div class="container mx-auto py-12">
         <h1 class="text-3xl font-bold mb-6">Edit Blog Post</h1>
         <form @submit.prevent="submit">
@@ -15,11 +16,13 @@
             </div>
         </form>
     </div>
+</Layout>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3';
+import Layout from '@/Layouts/Layout.vue';
 
 const { props } = usePage();
 const form = useForm({

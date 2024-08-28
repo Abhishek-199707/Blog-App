@@ -2,25 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Blog;
 use App\Models\Comment;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class CommentController extends Controller
 {
     public function store(Request $request, $blogId)
     {
+        // Validate the comment data
         $request->validate([
             'content' => 'required|string|max:1000',
         ]);
 
+        // Create the new comment
         Comment::create([
             'content' => $request->content,
             'user_id' => auth()->id(),
             'blog_id' => $blogId,
         ]);
 
-        return redirect()->route('blogs.show', $blogId)->with('success', 'Comment posted successfully.');
+        // Redirect back to the blog post where the comment was posted
+        return redirect()->route('blogs.show', ['id' => $blogId])->with('success', 'Comment posted successfully.');
     }
+
+
 
     public function destroy(Comment $comment)
     {

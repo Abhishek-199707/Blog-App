@@ -3,6 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
 import { ref } from 'vue';
+import Layout from '@/Layouts/Layout.vue';
 
 const form = ref({
     title: '',
@@ -23,9 +24,10 @@ const submit = () => {
 </script>
 
 <template>
+    <Layout>
     <Head title="Thoughts" />
 
-    <AuthenticatedLayout>
+
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Welcome to Your Blog !!!!</h2>
         </template>
@@ -47,7 +49,7 @@ const submit = () => {
                 </div>
             </div>
         </div>
-    </AuthenticatedLayout>
+</Layout>
 </template>
 
 <style scoped>
@@ -80,8 +82,7 @@ const submit = () => {
 
 .input-field:focus,
 .textarea-field:focus {
-    border-color: #3b82f6;
-    background-color: #ffffff;
+    border-color: #1a202c;
     outline: none;
 }
 
@@ -93,24 +94,28 @@ const submit = () => {
 
 /* Submit button */
 .submit-button {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    color: white;
     padding: 0.75rem 1.5rem;
-    border: none;
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 1rem; /* Consistent font size */
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
     cursor: pointer;
-    transition: background 0.3s ease, transform 0.3s ease;
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+    display: inline-block;
 }
 
 .submit-button:hover {
-    background: linear-gradient(135deg, #2563eb, #1e40af);
-    transform: scale(1.05);
+    background-color: #1a202c;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15)
 }
 
 /* Header styling */
 h2 {
-    color: #1e40af;
+    color: #1a202c;
     font-family: 'Poppins', sans-serif;
     font-size: 2rem;
     text-align: center;

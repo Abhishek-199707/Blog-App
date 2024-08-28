@@ -1,21 +1,14 @@
 <template>
+    <Layout>
     <div class="container mx-auto py-12 relative">
         <!-- Success Message -->
         <div v-if="successMessage" class="success-message">
             {{ successMessage }}
         </div>
 
-        <!-- Top Right Buttons (Logout, Write, and Register) -->
+        <!-- Top Right Buttons ( Write) -->
         <div class="top-right-buttons">
-            <Link
-                v-if="auth.user"
-                :href="route('logout')"
-                method="post"
-                as="button"
-                class="logout-button"
-            >
-                Logout
-            </Link>
+
             <Link
                 v-if="auth.user"
                 :href="route('dashboard')"
@@ -23,14 +16,6 @@
                 class="write-button"
             >
                 Write
-            </Link>
-            <Link
-                v-else
-                :href="route('register')"
-                as="button"
-                class="register-button"
-            >
-                Register
             </Link>
         </div>
 
@@ -112,6 +97,7 @@
             @page-changed="fetchBlogs"
         />
     </div>
+    </Layout>
 </template>
 
 <script setup>
@@ -119,6 +105,7 @@ import { ref, onMounted, nextTick } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
 import Pagination from '@/Components/Pagination.vue';
+import Layout from '@/Layouts/Layout.vue';
 
 const { props } = usePage();
 const blogs = ref(props.blogs?.data || []);
@@ -189,7 +176,7 @@ onMounted(async () => {
 <style scoped>
 /* General Button Styles */
 
-button, .logout-button, .write-button, .register-button, .view-button, .delete-repost-button {
+button, .logout-button, .write-button, .view-button, .delete-repost-button,.repost-button, .delete-comment-button{
     padding: 0.75rem 1.5rem;
     border-radius: 8px;
     font-size: 1rem;
@@ -202,65 +189,12 @@ button, .logout-button, .write-button, .register-button, .view-button, .delete-r
     display: inline-block;
 }
 
-/* Logout, Write, Register Buttons */
-.logout-button, .write-button, .register-button {
-    background: linear-gradient(90deg, #1e3a8a, #3b82f6);
-    color: #fff;
-    border: none;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
 
-.logout-button:hover, .write-button:hover, .register-button:hover {
-    background: linear-gradient(90deg, #3b82f6, #1e3a8a);
+ .write-button:hover, .view-button:hover, .repost-button:hover, .delete-repost-button:hover, .delete-comment-button:hover {
+    background-color: #1a202c;
+    color: white;
     transform: translateY(-2px);
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-}
-
-/* View Button */
-.view-button {
-    background: linear-gradient(90deg, #10b981, #34d399);
-    color: #fff;
-    border: none;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.view-button:hover {
-    background: linear-gradient(90deg, #34d399, #10b981);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-}
-
-/* Repost Button */
-.repost-button {
-    background: linear-gradient(90deg, #f59e0b, #fbbf24);
-    color: #fff;
-    border: none;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.repost-button:hover {
-    background: linear-gradient(90deg, #fbbf24, #f59e0b);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-}
-
-/* Delete Comment Button */
-.delete-comment-button {
-    background: linear-gradient(90deg, #ef4444, #f87171);
-    color: #fff;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    margin-left: 1rem;
-}
-
-.delete-comment-button:hover {
-    background: linear-gradient(90deg, #f87171, #ef4444);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
 }
 
 /* Repost Info */

@@ -11,78 +11,77 @@ use Inertia\Inertia;
 class BlogController extends Controller
 {
     // BlogController.php
-public function index()
-{
-    $blogs = Blog::with(['user', 'comments.user', 'reposts.user', 'originalAuthor']) // Eager load originalAuthor
-        ->latest()
-        ->paginate(1); // Adjust pagination as needed
+    public function index()
+    {
+        $blogs = Blog::with(['user', 'comments.user', 'reposts.user', 'originalAuthor']) // Eager load originalAuthor
+            ->latest()
+            ->paginate(1); // Adjust pagination as needed
 
-    return Inertia::render('Blog/Index', [
-        'blogs' => $blogs,
-        'auth' => [
-            'user' => auth()->user(),
-        ],
-    ]);
-}
-
-
-
-public function repost($id)
-{
-    $blog = Blog::findOrFail($id);
-
-    // Check if the user has already reposted this blog
-    if (Repost::where('blog_id', $blog->id)->where('user_id', auth()->id())->exists()) {
-        return redirect()->back()->with('error', 'You have already reposted this blog.');
+        return Inertia::render('Blog/Index', [
+            'blogs' => $blogs,
+            'auth' => [
+                'user' => auth()->user(),
+            ],
+        ]);
     }
 
-    // Create a repost record
-    Repost::create([
-        'blog_id' => $blog->id,
-        'user_id' => auth()->id(),
-    ]);
+    public function repost($id)
+    {
+        $blog = Blog::findOrFail($id);
 
-    // Fetch the updated blogs with reposts and their authors
-    $blogs = Blog::with(['user', 'comments.user', 'reposts.user'])
-        ->latest()
-        ->paginate(10); // Adjust pagination as needed
+        // Check if the user has already reposted this blog
+        if (
+            Repost::where('blog_id', $blog->id)
+                ->where('user_id', auth()->id())
+                ->exists()
+        ) {
+            return redirect()->back()->with('error', 'You have already reposted this blog.');
+        }
 
-    // Redirect back with success message and updated blogs
-    return redirect()->route('home')->with([
-        'success' => 'Blog reposted successfully!',
-        'blogs' => $blogs, // Pass updated blogs
-    ]);
-}
+        // Create a repost record
+        Repost::create([
+            'blog_id' => $blog->id,
+            'user_id' => auth()->id(),
+        ]);
 
-public function deleteRepost($id)
-{
-    $repost = Repost::where('blog_id', $id)
-        ->where('user_id', auth()->id())
-        ->firstOrFail();
+        // Fetch the updated blogs with reposts and their authors
+        $blogs = Blog::with(['user', 'comments.user', 'reposts.user'])
+            ->latest()
+            ->paginate(10); // Adjust pagination as needed
 
-    $repost->delete();
+        // Redirect back with success message and updated blogs
+        return redirect()
+            ->route('home')
+            ->with([
+                'success' => 'Blog reposted successfully!',
+                'blogs' => $blogs, // Pass updated blogs
+            ]);
+    }
 
-    return redirect()->route('home')->with('success', 'Repost deleted successfully!');
-}
+    public function deleteRepost($id)
+    {
+        $repost = Repost::where('blog_id', $id)->where('user_id', auth()->id())->firstOrFail();
 
+        $repost->delete();
 
+        return redirect()->route('home')->with('success', 'Repost deleted successfully!');
+    }
 
-public function store(Request $request)
-{
-    $request->validate([
-        'title' => 'required|string|max:255',
-        'content' => 'required|string',
-    ]);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+        ]);
 
-    Blog::create([
-        'title' => $request->title,
-        'content' => $request->content,
-        'user_id' => auth()->id(),
-    ]);
+        Blog::create([
+            'title' => $request->title,
+            'content' => $request->content,
+            'user_id' => auth()->id(),
+        ]);
 
-    return redirect()->route('home')->with('success', 'Blog posted successfully!');
-}
-
+        return redirect()->route('home')->with('success', 'Blog posted successfully!');
+    }
 
     public function edit($id)
     {
@@ -110,23 +109,33 @@ public function store(Request $request)
     }
     public function show($id)
     {
-        $blog = Blog::with('user')->findOrFail($id);
+        $blog = Blog::with([
+            'user',
+            'comments' => function($query) {
+                $query->orderBy('created_at', 'desc')->take(5);
+            },
+            'comments.user'
+        ])->findOrFail($id);
+
+        $totalComments = Comment::where('blog_id', $id)->count();
+
         return Inertia::render('BlogShow', [
             'blog' => $blog,
+            'totalComments' => $totalComments,
         ]);
     }
 
     public function destroy($id)
-{
-    $blog = Blog::findOrFail($id);
+    {
+        $blog = Blog::findOrFail($id);
 
-    // Check if the logged-in user is the author
-    if (auth()->user()->id !== $blog->user_id) {
-        return redirect()->route('home')->with('error', 'You do not have permission to delete this post.');
+        // Check if the logged-in user is the author
+        if (auth()->user()->id !== $blog->user_id) {
+            return redirect()->route('home')->with('error', 'You do not have permission to delete this post.');
+        }
+
+        $blog->delete();
+
+        return redirect()->route('home')->with('success', 'Blog post deleted successfully.');
     }
-
-    $blog->delete();
-
-    return redirect()->route('home')->with('success', 'Blog post deleted successfully.');
-}
 }
