@@ -92,21 +92,23 @@ class BlogController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
-        $blog = Blog::findOrFail($id);
+{
+    // Find the blog post by ID
+    $blog = Blog::findOrFail($id);
 
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-        ]);
+    // Validate the request data
+    $validatedData = $request->validate([
+        'title' => 'required|string|max:255',
+        'content' => 'required|string',
+    ]);
 
-        $blog->update([
-            'title' => $request->title,
-            'content' => $request->content,
-        ]);
+    // Update the blog post
+    $blog->update($validatedData);
 
-        return redirect()->route('home')->with('success', 'Blog post updated successfully.');
-    }
+    // Redirect to the updated blog post with a success message
+    return redirect()->route('blogs.show', ['id' => $id])->with('success', 'Blog post updated successfully.');
+}
+
     public function show($id)
     {
         $blog = Blog::with([
