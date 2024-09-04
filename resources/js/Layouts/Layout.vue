@@ -55,29 +55,40 @@ const logout = () => {
 }
 
 .nav-link {
-    margin-left: 1rem;
-    color: white;
+    color: #1a202c;
     text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #1a202c;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: inline-block;
+    margin-right: 1rem;
+    margin-bottom: 0.5rem;
     font-weight: bold;
-    transition: color 0.3s ease;
+    cursor: pointer;
 }
 
 .nav-link:hover {
-    color: #cbd5e0;
+    background-color: #1a202c;
+    color: white;
 }
 
 .logout-button {
-    color: white;
-    background-color: #1a202c;
-    border: none;
-    padding: 0.5rem 1rem;
+    color: #1a202c;
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #1a202c;
     border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: inline-block;
+    margin-right: 1rem;
+    margin-bottom: 0.5rem;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
 .logout-button:hover {
-    background-color: #2d3748;
+    background-color: #1a202c;
+    color: white;
 }
 </style>

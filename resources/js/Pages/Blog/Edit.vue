@@ -42,16 +42,17 @@ const submit = () => {
 }
 
 .button{
+    color: #1a202c;
+    text-decoration: none;
     padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    margin-right: 1rem;
-    margin-bottom: 1rem;
+    border: 2px solid #1a202c;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
     display: inline-block;
+    margin-right: 1rem;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 .input-field,
@@ -69,7 +70,5 @@ const submit = () => {
 .button:hover{
     background-color: #1a202c;
     color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
 </style>

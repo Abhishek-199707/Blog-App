@@ -109,12 +109,17 @@
   }
 
   button {
-    padding: 0.5rem 1rem;
-    border: none;
-    background-color: #1a202c;
-    color: white;
-    cursor: pointer;
+    color: #1a202c;
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #1a202c;
     border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: inline-block;
+    margin-right: 1rem;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    cursor: pointer;
   }
 
   button:disabled {
