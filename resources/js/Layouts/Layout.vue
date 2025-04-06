@@ -5,7 +5,8 @@
             <div class="container mx-auto flex justify-between items-center">
                 <!-- Clickable Blog Title -->
                 <Link :href="route('home')" class="text-2xl text-black font-bold">
-                    Thoughts
+                    <div class="flex justify-center align-middle">
+                   <img class="" src="../../../public/storage/assets/logo.png" width="45em" alt=""> <p class="p-2">Thoughts</p></div>
                 </Link>
                 <nav class="flex items-center space-x-4">
                     <Link

@@ -2,78 +2,19 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import Layout from '@/Layouts/Layout.vue';
-import Quill from 'quill';
-import 'quill/dist/quill.snow.css';
 
 const form = ref({
     title: '',
     content: '',
 });
 
-let editor;
-
-onMounted(() => {
-    editor = new Quill('#editor', {
-        theme: 'snow',
-        modules: {
-            toolbar: [
-                [{ header: [1, 2, false] }],
-                ['bold', 'italic', 'underline', 'strike'],
-                [{ list: 'ordered' }, { list: 'bullet' }],
-                ['link', 'image', 'video'],
-            ],
-        },
-    });
-
-    // Custom image upload handler
-    const toolbar = editor.getModule('toolbar');
-    toolbar.addHandler('image', () => {
-        selectLocalImage();
-    });
-
-    // Event listener to update form content when editor content changes
-    editor.on('text-change', () => {
-        form.value.content = editor.root.innerHTML;
-    });
-});
-
-// Function to handle local image uploads
-const selectLocalImage = () => {
-    const input = document.createElement('input');
-    input.setAttribute('type', 'file');
-    input.setAttribute('accept', 'image/*');
-    input.click();
-
-    input.onchange = async () => {
-        const file = input.files[0];
-        const formData = new FormData();
-        formData.append('image', file);
-
-        try {
-            const response = await fetch('/upload-image', {
-                method: 'POST',
-                body: formData,
-            });
-
-            const data = await response.json();
-
-            // Insert uploaded image URL into the editor
-            const range = editor.getSelection();
-            editor.insertEmbed(range.index, 'image', data.url);
-        } catch (error) {
-            console.error('Image upload failed:', error);
-        }
-    };
-};
-
 const submit = () => {
     Inertia.post(route('blogs.store'), form.value, {
         onSuccess: () => {
             form.value.title = '';
             form.value.content = '';
-            editor.root.innerHTML = ''; // Reset the editor content
         },
         onError: (errors) => {
             console.log(errors);
@@ -101,11 +42,17 @@ const submit = () => {
                             <input
                                 v-model="form.title"
                                 type="text"
-                                placeholder="Title"
+                                placeholder="Blog Title"
                                 class="input-field mb-4"
                                 required
                             />
-                            <div id="editor" class="textarea-field mb-4"></div>
+                            <textarea
+                                v-model="form.content"
+                                placeholder="Write your blog content here..."
+                                class="textarea-field mb-4"
+                                rows="10"
+                                required
+                            ></textarea>
                             <button type="submit" class="submit-button">Submit</button>
                         </form>
                     </div>
@@ -135,12 +82,13 @@ const submit = () => {
 }
 
 .textarea-field {
-    min-height: 200px;
-    border: 1px solid #e2e8f0;
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #e2e8f0;
     border-radius: 8px;
     background-color: #f9fafb;
-    padding: 1rem;
     font-size: 1rem;
+    resize: vertical;
 }
 
 .submit-button {

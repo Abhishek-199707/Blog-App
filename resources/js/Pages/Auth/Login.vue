@@ -31,12 +31,16 @@ const submit = () => {
 
 <template>
     <Layout>
-    <div class="flex justify-center items-center min-h-screen bg-gray-100">
+    <div class="flex justify-center items-center h-[75vh] bg-gray-100">
         <div class="w-full max-w-md">
             <Head title="Log in" />
 
             <div v-if="status" class="status-message flex justify-center items-center mb-4">
                 {{ status }}
+            </div>
+
+            <div class="flex justify-center p-4">
+                <img src="../../../../public/storage/assets/logo.png" width="100em" alt="">
             </div>
 
             <form @submit.prevent="submit" class="bg-white p-6 rounded-lg shadow-lg">
