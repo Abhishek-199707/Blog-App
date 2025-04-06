@@ -19,10 +19,10 @@
             </Link>
         </div>
 
-        <h1 class="text-3xl font-bold mb-6">Blog Posts</h1>
+        <h1 class="text-3xl font-bold mb-6 flex justify-center">Blog Posts</h1>
 
         <!-- User Authentication Section -->
-        <div v-if="auth.user" class="mb-6">
+        <div v-if="auth.user" class="mb-6 flex justify-start itmes-start">
             <p>Welcome, {{ auth.user?.name }}!</p>
         </div>
         <div v-else class="mb-6">

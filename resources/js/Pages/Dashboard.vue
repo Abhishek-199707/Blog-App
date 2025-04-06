@@ -2,31 +2,89 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import Layout from '@/Layouts/Layout.vue';
+import Quill from 'quill';
+import 'quill/dist/quill.snow.css';
 
 const form = ref({
     title: '',
     content: '',
 });
 
+let editor;
+
+onMounted(() => {
+    editor = new Quill('#editor', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                [{ header: [1, 2, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                ['link', 'image', 'video'],
+            ],
+        },
+    });
+
+    // Custom image upload handler
+    const toolbar = editor.getModule('toolbar');
+    toolbar.addHandler('image', () => {
+        selectLocalImage();
+    });
+
+    // Event listener to update form content when editor content changes
+    editor.on('text-change', () => {
+        form.value.content = editor.root.innerHTML;
+    });
+});
+
+// Function to handle local image uploads
+const selectLocalImage = () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+
+    input.onchange = async () => {
+        const file = input.files[0];
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            const response = await fetch('/upload-image', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const data = await response.json();
+
+            // Insert uploaded image URL into the editor
+            const range = editor.getSelection();
+            editor.insertEmbed(range.index, 'image', data.url);
+        } catch (error) {
+            console.error('Image upload failed:', error);
+        }
+    };
+};
+
 const submit = () => {
     Inertia.post(route('blogs.store'), form.value, {
         onSuccess: () => {
             form.value.title = '';
             form.value.content = '';
+            editor.root.innerHTML = ''; // Reset the editor content
         },
         onError: (errors) => {
             console.log(errors);
-        }
+        },
     });
 };
 </script>
 
 <template>
     <Layout>
-    <Head title="Thoughts" />
-
+        <Head title="Thoughts" />
 
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Welcome to Your Blog !!!!</h2>
@@ -40,8 +98,14 @@ const submit = () => {
                 <div class="mt-6">
                     <div v-if="$page.props.auth.user" class="blog-form-container">
                         <form @submit.prevent="submit">
-                            <input v-model="form.title" type="text" placeholder="Title" class="input-field mb-4" />
-                            <textarea v-model="form.content" placeholder="Content" class="textarea-field mb-4"></textarea>
+                            <input
+                                v-model="form.title"
+                                type="text"
+                                placeholder="Title"
+                                class="input-field mb-4"
+                                required
+                            />
+                            <div id="editor" class="textarea-field mb-4"></div>
                             <button type="submit" class="submit-button">Submit</button>
                         </form>
                     </div>
@@ -49,79 +113,48 @@ const submit = () => {
                 </div>
             </div>
         </div>
-</Layout>
+    </Layout>
 </template>
 
 <style scoped>
-/* Container for the blog form */
 .blog-form-container {
     background: linear-gradient(135deg, #f3f4f6, #ffffff);
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
-.blog-form-container:hover {
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-    transform: translateY(-5px);
-}
-
-/* Input fields */
-.input-field,
-.textarea-field {
+.input-field {
     width: 100%;
     padding: 1rem;
     border: 2px solid #e2e8f0;
     border-radius: 8px;
-    font-size: 1rem;
-    transition: border-color 0.3s ease, background-color 0.3s ease;
-    margin-bottom: 1rem;
     background-color: #f9fafb;
+    margin-bottom: 1rem;
+    font-size: 1rem;
 }
 
-.input-field:focus,
-.textarea-field:focus {
-    border-color: #1a202c;
-    outline: none;
-}
-
-/* Textarea styling */
 .textarea-field {
-    height: 200px;
-    resize: vertical;
+    min-height: 200px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: #f9fafb;
+    padding: 1rem;
+    font-size: 1rem;
 }
 
-/* Submit button */
 .submit-button {
     color: #1a202c;
-    text-decoration: none;
-    padding: 0.75rem 1.5rem;
     border: 2px solid #1a202c;
     border-radius: 4px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    display: inline-block;
-    margin-right: 1rem;
-    margin-bottom: 0.5rem;
-    font-weight: bold;
+    padding: 0.75rem 1.5rem;
     cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .submit-button:hover {
     background-color: #1a202c;
     color: white;
 }
-
-/* Header styling */
-h2 {
-    color: #1a202c;
-    font-family: 'Poppins', sans-serif;
-    font-size: 2rem;
-    text-align: center;
-    margin-bottom: 1.5rem;
-    font-weight: 600;
-    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
-}
 </style>
-
-

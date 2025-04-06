@@ -99,7 +99,7 @@ class BlogController extends Controller
     // Validate the request data
     $validatedData = $request->validate([
         'title' => 'required|string|max:255',
-        'content' => 'required|string',
+        'content' => 'required|string|max:4294967295',
     ]);
 
     // Update the blog post

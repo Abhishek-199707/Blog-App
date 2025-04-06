@@ -6,13 +6,14 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CommentController;
+use GuzzleHttp\Psr7\Request;
 
 // Authentication routes
 Route::middleware('guest')->group(function () {
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('/register', [RegisteredUserController::class, 'store']);
 
-    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::get('/', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 });
 
@@ -41,6 +42,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->middleware('verified')->name('dashboard');
+});
+Route::post('/upload-image', function (Request $request) {
+    if ($request->hasFile('key')('image')) {
+        $file = $request->file('image');
+        $path = $file->store('uploads', 'public'); // Save in `storage/app/public/uploads`
+        return response()->json(['url' => asset('storage/' . $path)]);
+    }
+    return response()->json(['error' => 'No image uploaded'], 400);
 });
 
 require __DIR__.'/auth.php';
